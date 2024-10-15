@@ -1,105 +1,210 @@
-// import React, { useState } from 'react';
-// import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material'
-// import { useDispatch, useSelector } from 'react-redux';
-// import { deleteUser, updateUser } from '../../redux/userRelated/userHandle';
-// import { useNavigate } from 'react-router-dom'
-// import { authLogout } from '../../redux/userRelated/userSlice';
-// import { Button, Collapse } from '@mui/material';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Grid, Box, Typography, Paper, Checkbox, FormControlLabel, TextField, CssBaseline, IconButton, InputAdornment, CircularProgress } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import bgpic from "../../assets/designlogin.jpg";
+import { LightPurpleButton } from '../../components/buttonStyles';
+import { registerUser } from '../../redux/userRelated/userHandle';
+import styled from 'styled-components';
+import Popup from '../../components/Popup';
 
-import { useSelector } from 'react-redux';
+const defaultTheme = createTheme();
 
-const AdminProfile = () => {
-    // const [showTab, setShowTab] = useState(false);
-    // const buttonText = showTab ? 'Cancel' : 'Edit profile';
+const AdminRegisterPage = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    // const navigate = useNavigate()
-    // const dispatch = useDispatch();
-        const { currentUser } = useSelector((state) => state.user);
-    // const { currentUser, response, error } = useSelector((state) => state.user);
-    // const address = "Admin"
+    const { status, currentUser, response, error, currentRole } = useSelector(state => state.user);
+    const [toggle, setToggle] = useState(false);
+    const [loader, setLoader] = useState(false);
+    const [showPopup, setShowPopup] = useState(false);
+    const [message, setMessage] = useState("");
 
-    // if (response) { console.log(response) }
-    // else if (error) { console.log(error) }
+    const [emailError, setEmailError] = useState(false);
+    const [passwordError, setPasswordError] = useState(false);
+    const [adminNameError, setAdminNameError] = useState(false);
+    const [schoolNameError, setSchoolNameError] = useState(false);
+    const role = "Admin";
 
-    // const [name, setName] = useState(currentUser.name);
-    // const [email, setEmail] = useState(currentUser.email);
-    // const [password, setPassword] = useState("");
-    // const [schoolName, setSchoolName] = useState(currentUser.schoolName);
+    const validateEmail = (email) => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(String(email).toLowerCase());
+    };
 
-    // const fields = password === "" ? { name, email, schoolName } : { name, email, password, schoolName }
+    const handleSubmit = (event) => {
+        event.preventDefault();
 
-    // const submitHandler = (event) => {
-    //     event.preventDefault()
-    //     dispatch(updateUser(fields, currentUser._id, address))
-    // }
+        const name = event.target.adminName.value;
+        const schoolName = event.target.schoolName.value;
+        const email = event.target.email.value;
+        const password = event.target.password.value;
 
-    // const deleteHandler = () => {
-    //     try {
-    //         dispatch(deleteUser(currentUser._id, "Students"));
-    //         dispatch(deleteUser(currentUser._id, address));
-    //         dispatch(authLogout());
-    //         navigate('/');
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }
+        if (!name || !schoolName || !email || !password) {
+            if (!name) setAdminNameError(true);
+            if (!schoolName) setSchoolNameError(true);
+            if (!email) setEmailError(true);
+            if (!password) setPasswordError(true);
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            setEmailError(true);
+            return;
+        }
+
+        const fields = { name, email, password, role, schoolName };
+        setLoader(true);
+        dispatch(registerUser(fields, role));
+    };
+
+    const handleInputChange = (event) => {
+        const { name } = event.target;
+        if (name === 'email') setEmailError(false);
+        if (name === 'password') setPasswordError(false);
+        if (name === 'adminName') setAdminNameError(false);
+        if (name === 'schoolName') setSchoolNameError(false);
+    };
+
+    useEffect(() => {
+        if (status === 'success' || (currentUser !== null && currentRole === 'Admin')) {
+            navigate('/Admin/dashboard');
+        } else if (status === 'failed') {
+            setMessage(response);
+            setShowPopup(true);
+            setLoader(false);
+        } else if (status === 'error') {
+            console.log(error);
+        }
+    }, [status, currentUser, currentRole, navigate, error, response]);
 
     return (
-        <div>
-            Name: {currentUser.name}
-            <br />
-            Email: {currentUser.email}
-            <br />
-            School: {currentUser.schoolName}
-            <br />
-            {/* <Button variant="contained" color="error" onClick={deleteHandler}>Delete</Button> */}
-            {/* <Button variant="contained" sx={styles.showButton}
-                onClick={() => setShowTab(!showTab)}>
-                {showTab ? <KeyboardArrowUp /> : <KeyboardArrowDown />}{buttonText}
-            </Button>
-            <Collapse in={showTab} timeout="auto" unmountOnExit>
-                <div className="register">
-                    <form className="registerForm" onSubmit={submitHandler}>
-                        <span className="registerTitle">Edit Details</span>
-                        <label>Name</label>
-                        <input className="registerInput" type="text" placeholder="Enter your name..."
-                            value={name}
-                            onChange={(event) => setName(event.target.value)}
-                            autoComplete="name" required />
-
-                        <label>School</label>
-                        <input className="registerInput" type="text" placeholder="Enter your school name..."
-                            value={schoolName}
-                            onChange={(event) => setSchoolName(event.target.value)}
-                            autoComplete="name" required />
-
-                        <label>Email</label>
-                        <input className="registerInput" type="email" placeholder="Enter your email..."
-                            value={email}
-                            onChange={(event) => setEmail(event.target.value)}
-                            autoComplete="email" required />
-
-                        <label>Password</label>
-                        <input className="registerInput" type="password" placeholder="Enter your password..."
-                            value={password}
-                            onChange={(event) => setPassword(event.target.value)}
-                            autoComplete="new-password" />
-
-                        <button className="registerButton" type="submit" >Update</button>
-                    </form>
-                </div>
-            </Collapse> */}
-        </div>
-    )
+        <ThemeProvider theme={defaultTheme}>
+            <Grid container component="main" sx={{ height: '100vh' }}>
+                <CssBaseline />
+                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+                    <Box sx={{ my: 8, mx: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <Typography variant="h4" sx={{ mb: 2, color: "#2c2143" }}>
+                            Admin Register
+                        </Typography>
+                        <Typography variant="h7">
+                            Create your own school by registering as an admin.
+                            <br />
+                            You will be able to add students and faculty and manage the system.
+                        </Typography>
+                        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }}>
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="adminName"
+                                label="Enter your name"
+                                name="adminName"
+                                autoComplete="name"
+                                autoFocus
+                                error={adminNameError}
+                                helperText={adminNameError && 'Name is required'}
+                                onChange={handleInputChange}
+                            />
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="schoolName"
+                                label="Create your school name"
+                                name="schoolName"
+                                autoComplete="off"
+                                error={schoolNameError}
+                                helperText={schoolNameError && 'School name is required'}
+                                onChange={handleInputChange}
+                            />
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Enter your email"
+                                name="email"
+                                autoComplete="email"
+                                error={emailError}
+                                helperText={emailError && 'Email is required'}
+                                onChange={handleInputChange}
+                            />
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type={toggle ? 'text' : 'password'}
+                                id="password"
+                                autoComplete="current-password"
+                                error={passwordError}
+                                helperText={passwordError && 'Password is required'}
+                                onChange={handleInputChange}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={() => setToggle(!toggle)}>
+                                                {toggle ? <Visibility /> : <VisibilityOff />}
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                            <Grid container sx={{ display: "flex", justifyContent: "space-between" }}>
+                                <FormControlLabel
+                                    control={<Checkbox value="remember" color="primary" />}
+                                    label="Remember me"
+                                />
+                            </Grid>
+                            <LightPurpleButton
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                                disabled={loader}
+                            >
+                                {loader ? <CircularProgress size={24} color="inherit" /> : "Register"}
+                            </LightPurpleButton>
+                            <Grid container>
+                                <Grid>
+                                    Already have an account?
+                                </Grid>
+                                <Grid item sx={{ ml: 2 }}>
+                                    <StyledLink to="/Adminlogin">
+                                        Log in
+                                    </StyledLink>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Box>
+                </Grid>
+                <Grid
+                    item
+                    xs={false}
+                    sm={4}
+                    md={7}
+                    sx={{
+                        backgroundImage: `url(${bgpic})`,
+                        backgroundRepeat: 'no-repeat',
+                        backgroundColor: (t) => t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                    }}
+                />
+            </Grid>
+            <Popup message={message} setShowPopup={setShowPopup} showPopup={showPopup} />
+        </ThemeProvider>
+    );
 }
 
-export default AdminProfile
+export default AdminRegisterPage;
 
-// const styles = {
-//     attendanceButton: {
-//         backgroundColor: "#270843",
-//         "&:hover": {
-//             backgroundColor: "#3f1068",
-//         }
-//     }
-// }
+const StyledLink = styled(Link)`
+  margin-top: 9px;
+  text-decoration: none;
+  color: #7f56da;
+`;
