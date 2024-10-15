@@ -17,7 +17,7 @@ const Homepage = () => {
                         <StyledTitle>
                             Welcome to
                             <br />
-                            School Management
+                            Yetma ict School Management
                             <br />
                             System
                         </StyledTitle>
@@ -30,11 +30,11 @@ const Homepage = () => {
                             <StyledLink to="/choose">
                                 <LightPurpleButton variant="contained" fullWidth>
                                     Login
-                                </LightPurpleButton>
+                                </LightBlueButton>
                             </StyledLink>
                             <StyledLink to="/chooseasguest">
                                 <Button variant="outlined" fullWidth
-                                    sx={{ mt: 2, mb: 3, color: "#7f56da", borderColor: "#7f56da" }}
+                                    sx={{ mt: 2, mb: 3, color: "#C7B8EA", borderColor: "#7f56da" }}
                                 >
                                     Login as Guest
                                 </Button>
@@ -81,7 +81,7 @@ const StyledBox = styled(Box)`
 
 const StyledTitle = styled.h1`
   font-size: 3rem;
-  color: #252525;
+  color: #964B00;
   font-weight: bold;
   margin: 0; /* Remove default margin for better alignment */
 `;
