@@ -1,14 +1,22 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Grid, Box, Typography, Paper, Checkbox, FormControlLabel, TextField, CssBaseline, IconButton, InputAdornment, CircularProgress, Backdrop } from '@mui/material';
+import { Grid, Box, Typography, Paper, Checkbox, FormControlLabel, TextField, CssBaseline, IconButton, InputAdornment, CircularProgress } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import bgpic from "../assets/designlogin.jpg"
+import bgpic from "../assets/designlogin.jpg";
 import { LightPurpleButton } from '../components/buttonStyles';
 import styled from 'styled-components';
 import { loginUser } from '../redux/userRelated/userHandle';
-import Popup from '../components/Popup';
+
+// StyledLink definition to remove 'StyledLink is not defined' error
+const StyledLink = styled.a`
+    color: #7f56da;
+    text-decoration: none;
+    &:hover {
+        text-decoration: underline;
+    }
+`;
 
 const defaultTheme = createTheme();
 
@@ -16,13 +24,9 @@ const LoginPage = ({ role }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { status, currentUser, response, error, currentRole } = useSelector(state => state.user);
-    
+
     const [toggle, setToggle] = useState(false);
-    const [guestLoader, setGuestLoader] = useState(false);
     const [loader, setLoader] = useState(false);
-    const [showPopup, setShowPopup] = useState(false);
-    const [message, setMessage] = useState("");
-    
     const [errors, setErrors] = useState({
         email: false,
         password: false,
@@ -30,6 +34,7 @@ const LoginPage = ({ role }) => {
         studentName: false,
     });
 
+    // Handle form submission
     const handleSubmit = (event) => {
         event.preventDefault();
         const values = {
@@ -45,6 +50,7 @@ const LoginPage = ({ role }) => {
         }
     };
 
+    // Validate inputs based on the role
     const validateInputs = (role, values) => {
         const newErrors = {};
         if (role === "Student") {
@@ -59,29 +65,18 @@ const LoginPage = ({ role }) => {
         return Object.keys(newErrors).length === 0;
     };
 
+    // Handle input changes to reset validation errors
     const handleInputChange = (event) => {
         const { name } = event.target;
         setErrors((prevErrors) => ({ ...prevErrors, [name]: false }));
     };
 
-    const guestModeHandler = () => {
-        const password = "zxc";
-        const fields = role === "Student" 
-            ? { rollNum: "1", studentName: "Abdulazeez Abdulrazak", password } 
-            : { email: role === "Admin" ? "Abdulazeezbabatunde10@gmail.com" : "Abdulazeezbabatunde20@yahoo.com", password };
-
-        setGuestLoader(true);
-        dispatch(loginUser(fields, role));
-    };
-
+    // Use effect to handle successful login
     useEffect(() => {
         if (status === 'success' || currentUser !== null) {
             navigate(currentRole === 'Admin' ? '/Admin/dashboard' : currentRole === 'Student' ? '/Student/dashboard' : '/Teacher/dashboard');
         } else if (status === 'failed' || status === 'error') {
-            setMessage(response || "Network Error");
-            setShowPopup(true);
             setLoader(false);
-            setGuestLoader(false);
         }
     }, [status, currentRole, navigate, error, response, currentUser]);
 
@@ -94,7 +89,7 @@ const LoginPage = ({ role }) => {
                         <Typography variant="h4" sx={{ mb: 2, color: "#2c2143" }}>
                             {role} Login
                         </Typography>
-                        <Typography variant="h7">Welcome back! Please putin your details</Typography>
+                        <Typography variant="h7">Welcome back! Please put in your details</Typography>
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }}>
                             {role === "Student" ? (
                                 <>
@@ -167,17 +162,6 @@ const LoginPage = ({ role }) => {
                             <LightPurpleButton type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
                                 {loader ? <CircularProgress size={24} color="inherit" /> : "Login"}
                             </LightPurpleButton>
-                            <Button fullWidth onClick={guestModeHandler} variant="outlined" sx={{ mt: 2, mb: 3, color: "#7f56da", borderColor: "#7f56da" }}>
-                                Login as Guest
-                            </Button>
-                            {role === "Admin" && (
-                                <Grid container>
-                                    <Grid>Don't have an account?</Grid>
-                                    <Grid item sx={{ ml: 2 }}>
-                                        <StyledLink to="/Adminregister">Sign up</StyledLink>
-                                    </Grid>
-                                </Grid>
-                            )}
                         </Box>
                     </Box>
                 </Grid>
@@ -195,10 +179,6 @@ const LoginPage = ({ role }) => {
                         backgroundPosition: 'center',
                     }}
                 />
-                <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={guestLoader}>
-                    <CircularProgress color="inherit" />
-                </Backdrop>
-                <Popup open={showPopup} setOpen={setShowPopup} message={message} />
             </Grid>
         </ThemeProvider>
     );

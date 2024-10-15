@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { getSubjectList } from '../../../redux/sclassRelated/sclassHandle';
-import { deleteUser } from '../../../redux/userRelated/userHandle';
+// Removed deleteUser import
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import {
     Paper, Box, IconButton,
@@ -14,10 +14,10 @@ import SpeedDialTemplate from '../../../components/SpeedDialTemplate';
 import Popup from '../../../components/Popup';
 
 const ShowSubjects = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { subjectsList, loading, error, response } = useSelector((state) => state.sclass);
-    const { currentUser } = useSelector(state => state.user)
+    const { currentUser } = useSelector(state => state.user);
 
     useEffect(() => {
         dispatch(getSubjectList(currentUser._id, "AllSubjects"));
@@ -33,20 +33,21 @@ const ShowSubjects = () => {
     const deleteHandler = (deleteID, address) => {
         console.log(deleteID);
         console.log(address);
-        setMessage("Sorry the delete function has been disabled for now.")
-        setShowPopup(true)
+        setMessage("Sorry, the delete function has been disabled for now.");
+        setShowPopup(true);
 
+        // You can implement delete logic here if needed
         // dispatch(deleteUser(deleteID, address))
         //     .then(() => {
         //         dispatch(getSubjectList(currentUser._id, "AllSubjects"));
         //     })
-    }
+    };
 
     const subjectColumns = [
         { id: 'subName', label: 'Sub Name', minWidth: 170 },
         { id: 'sessions', label: 'Sessions', minWidth: 170 },
         { id: 'sclassName', label: 'Class', minWidth: 170 },
-    ]
+    ];
 
     const subjectRows = subjectsList.map((subject) => {
         return {
@@ -56,7 +57,7 @@ const ShowSubjects = () => {
             sclassID: subject.sclassName._id,
             id: subject._id,
         };
-    })
+    });
 
     const SubjectsButtonHaver = ({ row }) => {
         return (
@@ -85,29 +86,28 @@ const ShowSubjects = () => {
 
     return (
         <>
-            {loading ?
+            {loading ? (
                 <div>Loading...</div>
-                :
+            ) : (
                 <>
-                    {response ?
+                    {response ? (
                         <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
                             <GreenButton variant="contained"
                                 onClick={() => navigate("/Admin/subjects/chooseclass")}>
                                 Add Subjects
                             </GreenButton>
                         </Box>
-                        :
+                    ) : (
                         <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                            {Array.isArray(subjectsList) && subjectsList.length > 0 &&
+                            {Array.isArray(subjectsList) && subjectsList.length > 0 && (
                                 <TableTemplate buttonHaver={SubjectsButtonHaver} columns={subjectColumns} rows={subjectRows} />
-                            }
+                            )}
                             <SpeedDialTemplate actions={actions} />
                         </Paper>
-                    }
+                    )}
                 </>
-            }
+            )}
             <Popup message={message} setShowPopup={setShowPopup} showPopup={showPopup} />
-
         </>
     );
 };
