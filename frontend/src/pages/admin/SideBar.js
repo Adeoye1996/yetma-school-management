@@ -12,74 +12,38 @@ import SupervisorAccountOutlinedIcon from '@mui/icons-material/SupervisorAccount
 import ReportIcon from '@mui/icons-material/Report';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
+const routes = [
+    { path: "/", label: "Home", Icon: HomeIcon },
+    { path: "/Admin/classes", label: "Classes", Icon: ClassOutlinedIcon },
+    { path: "/Admin/subjects", label: "Subjects", Icon: AssignmentIcon },
+    { path: "/Admin/teachers", label: "Teachers", Icon: SupervisorAccountOutlinedIcon },
+    { path: "/Admin/students", label: "Students", Icon: PersonOutlineIcon },
+    { path: "/Admin/notices", label: "Notices", Icon: AnnouncementOutlinedIcon },
+    { path: "/Admin/complains", label: "Complains", Icon: ReportIcon },
+    { path: "/Admin/profile", label: "Profile", Icon: AccountCircleOutlinedIcon },
+    { path: "/logout", label: "Logout", Icon: ExitToAppIcon },
+];
+
 const SideBar = () => {
     const location = useLocation();
+
     return (
         <>
-            <React.Fragment>
-                <ListItemButton component={Link} to="/">
+            {routes.map(({ path, label, Icon }) => (
+                <ListItemButton key={path} component={Link} to={path}>
                     <ListItemIcon>
-                        <HomeIcon color={location.pathname === ("/" || "/Admin/dashboard") ? 'primary' : 'inherit'} />
+                        <Icon color={location.pathname.startsWith(path) ? 'primary' : 'inherit'} />
                     </ListItemIcon>
-                    <ListItemText primary="Home" />
+                    <ListItemText primary={label} />
                 </ListItemButton>
-                <ListItemButton component={Link} to="/Admin/classes">
-                    <ListItemIcon>
-                        <ClassOutlinedIcon color={location.pathname.startsWith('/Admin/classes') ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Classes" />
-                </ListItemButton>
-                <ListItemButton component={Link} to="/Admin/subjects">
-                    <ListItemIcon>
-                        <AssignmentIcon color={location.pathname.startsWith("/Admin/subjects") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Subjects" />
-                </ListItemButton>
-                <ListItemButton component={Link} to="/Admin/teachers">
-                    <ListItemIcon>
-                        <SupervisorAccountOutlinedIcon color={location.pathname.startsWith("/Admin/teachers") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Teachers" />
-                </ListItemButton>
-                <ListItemButton component={Link} to="/Admin/students">
-                    <ListItemIcon>
-                        <PersonOutlineIcon color={location.pathname.startsWith("/Admin/students") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Students" />
-                </ListItemButton>
-                <ListItemButton component={Link} to="/Admin/notices">
-                    <ListItemIcon>
-                        <AnnouncementOutlinedIcon color={location.pathname.startsWith("/Admin/notices") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Notices" />
-                </ListItemButton>
-                <ListItemButton component={Link} to="/Admin/complains">
-                    <ListItemIcon>
-                        <ReportIcon color={location.pathname.startsWith("/Admin/complains") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Complains" />
-                </ListItemButton>
-            </React.Fragment>
+            ))}
             <Divider sx={{ my: 1 }} />
-            <React.Fragment>
-                <ListSubheader component="div" inset>
-                    User
-                </ListSubheader>
-                <ListItemButton component={Link} to="/Admin/profile">
-                    <ListItemIcon>
-                        <AccountCircleOutlinedIcon color={location.pathname.startsWith("/Admin/profile") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Profile" />
-                </ListItemButton>
-                <ListItemButton component={Link} to="/logout">
-                    <ListItemIcon>
-                        <ExitToAppIcon color={location.pathname.startsWith("/logout") ? 'primary' : 'inherit'} />
-                    </ListItemIcon>
-                    <ListItemText primary="Logout" />
-                </ListItemButton>
-            </React.Fragment>
+            <ListSubheader component="div" inset>
+                User
+            </ListSubheader>
+            {/* Add user-related links here if necessary */}
         </>
-    )
-}
+    );
+};
 
-export default SideBar
+export default SideBar;
