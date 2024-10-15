@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { getTeacherDetails } from '../../../redux/teacherRelated/teacherHandle';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Container, Typography } from '@mui/material';
+import { Button, Container, Typography, CircularProgress } from '@mui/material';
 
 const TeacherDetails = () => {
     const navigate = useNavigate();
@@ -16,10 +16,6 @@ const TeacherDetails = () => {
         dispatch(getTeacherDetails(teacherID));
     }, [dispatch, teacherID]);
 
-    if (error) {
-        console.log(error);
-    }
-
     const isSubjectNamePresent = teacherDetails?.teachSubject?.subName;
 
     const handleAddSubject = () => {
@@ -27,19 +23,25 @@ const TeacherDetails = () => {
     };
 
     return (
-        <>
+        <Container>
             {loading ? (
-                <div>Loading...</div>
+                <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                    <CircularProgress />
+                </div>
+            ) : error ? (
+                <Typography variant="h6" color="error" align="center">
+                    Error: {error}
+                </Typography>
             ) : (
-                <Container>
+                <>
                     <Typography variant="h4" align="center" gutterBottom>
                         Teacher Details
                     </Typography>
                     <Typography variant="h6" gutterBottom>
-                        Teacher Name: {teacherDetails?.name}
+                        Teacher Name: {teacherDetails?.name || "N/A"}
                     </Typography>
                     <Typography variant="h6" gutterBottom>
-                        Class Name: {teacherDetails?.teachSclass?.sclassName}
+                        Class Name: {teacherDetails?.teachSclass?.sclassName || "N/A"}
                     </Typography>
                     {isSubjectNamePresent ? (
                         <>
@@ -51,13 +53,17 @@ const TeacherDetails = () => {
                             </Typography>
                         </>
                     ) : (
-                        <Button variant="contained" onClick={handleAddSubject}>
+                        <Button 
+                            variant="contained" 
+                            onClick={handleAddSubject} 
+                            disabled={loading}
+                        >
                             Add Subject
                         </Button>
                     )}
-                </Container>
+                </>
             )}
-        </>
+        </Container>
     );
 };
 

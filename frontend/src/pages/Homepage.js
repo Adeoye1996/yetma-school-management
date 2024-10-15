@@ -10,7 +10,7 @@ const Homepage = () => {
         <StyledContainer>
             <Grid container spacing={0}>
                 <Grid item xs={12} md={6}>
-                    <img src={Students} alt="students" style={{ width: '100%' }} />
+                    <StyledImage src={Students} alt="Students" />
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <StyledPaper elevation={3}>
@@ -41,9 +41,9 @@ const Homepage = () => {
                             </StyledLink>
                             <StyledText>
                                 Don't have an account?{' '}
-                                <Link to="/Adminregister" style={{color:"#550080"}}>
+                                <StyledLink to="/Adminregister">
                                     Sign up
-                                </Link>
+                                </StyledLink>
                             </StyledText>
                         </StyledBox>
                     </StyledPaper>
@@ -64,14 +64,17 @@ const StyledContainer = styled(Container)`
 
 const StyledPaper = styled.div`
   padding: 24px;
-  height: 100vh;
+  height: auto; /* Change to auto for better content fitting */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
 `;
 
 const StyledBox = styled(Box)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content:center;
+  justify-content: center;
   gap: 16px;
   padding: 24px;
 `;
@@ -79,21 +82,24 @@ const StyledBox = styled(Box)`
 const StyledTitle = styled.h1`
   font-size: 3rem;
   color: #252525;
-  /* font-family: "Manrope"; */
   font-weight: bold;
-  padding-top: 0;
-  letter-spacing: normal;
-  line-height: normal;
+  margin: 0; /* Remove default margin for better alignment */
 `;
 
 const StyledText = styled.p`
-  /* color: #550080; */
   margin-top: 30px;
   margin-bottom: 30px; 
   letter-spacing: normal;
-  line-height: normal;
+  line-height: 1.5; /* Improved readability */
 `;
 
 const StyledLink = styled(Link)`
   text-decoration: none;
+  color: #550080; /* Ensure link color is consistent */
+`;
+
+const StyledImage = styled.img`
+  width: 100%; /* Ensure full width */
+  height: auto; /* Maintain aspect ratio */
+  object-fit: cover; /* Cover the container without distortion */
 `;

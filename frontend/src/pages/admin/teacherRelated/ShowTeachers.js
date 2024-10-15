@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
 import { getAllTeachers } from '../../../redux/teacherRelated/teacherHandle';
 import {
     Paper, Table, TableBody, TableContainer,
@@ -17,7 +17,9 @@ import Popup from '../../../components/Popup';
 const ShowTeachers = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
-
+    const [showPopup, setShowPopup] = useState(false);
+    const [message, setMessage] = useState("");
+    
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { teachersList, loading, error, response } = useSelector((state) => state.teacher);
@@ -26,9 +28,6 @@ const ShowTeachers = () => {
     useEffect(() => {
         dispatch(getAllTeachers(currentUser._id));
     }, [currentUser._id, dispatch]);
-
-    const [showPopup, setShowPopup] = useState(false);
-    const [message, setMessage] = useState("");
 
     if (loading) {
         return <div>Loading...</div>;
@@ -44,15 +43,20 @@ const ShowTeachers = () => {
         console.log(error);
     }
 
-    const deleteHandler = (deleteID, address) => {
-        console.log(deleteID);
-        console.log(address);
-        setMessage("Sorry the delete function has been disabled for now.")
-        setShowPopup(true)
+    const deleteHandler = (deleteID) => {
+        setMessage("Are you sure you want to delete this teacher?");
+        setShowPopup(true);
+        
+        // Proceed with deletion if confirmed
+        const confirmDelete = () => {
+            dispatch(deleteUser(deleteID)).then(() => {
+                dispatch(getAllTeachers(currentUser._id));
+            });
+            setShowPopup(false); // Hide the popup after deletion
+        };
 
-        // dispatch(deleteUser(deleteID, address)).then(() => {
-        //     dispatch(getAllTeachers(currentUser._id));
-        // });
+        // Show confirmation message
+        <Popup message={message} setShowPopup={setShowPopup} showPopup={showPopup} confirmAction={confirmDelete} />;
     };
 
     const columns = [
@@ -78,7 +82,7 @@ const ShowTeachers = () => {
         },
         {
             icon: <PersonRemoveIcon color="error" />, name: 'Delete All Teachers',
-            action: () => deleteHandler(currentUser._id, "Teachers")
+            action: () => deleteHandler(currentUser._id)
         },
     ];
 
@@ -133,7 +137,7 @@ const ShowTeachers = () => {
                                             );
                                         })}
                                         <StyledTableCell align="center">
-                                            <IconButton onClick={() => deleteHandler(row.id, "Teacher")}>
+                                            <IconButton onClick={() => deleteHandler(row.id)}>
                                                 <PersonRemoveIcon color="error" />
                                             </IconButton>
                                             <BlueButton variant="contained"
@@ -162,8 +166,8 @@ const ShowTeachers = () => {
 
             <SpeedDialTemplate actions={actions} />
             <Popup message={message} setShowPopup={setShowPopup} showPopup={showPopup} />
-        </Paper >
+        </Paper>
     );
 };
 
-export default ShowTeachers
+export default ShowTeachers;
