@@ -29,11 +29,11 @@ const ChooseUser = ({ visitor }) => {
     let fields = {};
     
     if (user === "Admin") {
-      fields = { email: "yogendra@12", password };
+      fields = { email: "abdulazeezbabatunde10@gmail.com", password };
     } else if (user === "Student") {
-      fields = { rollNum: "1", studentName: "Dipesh Awasthi", password };
+      fields = { rollNum: "1", studentName: "Abdulazeez Abdulrazak", password };
     } else if (user === "Teacher") {
-      fields = { email: "tony@12", password };
+      fields = { email: "abdulazeezbabatunde10@gmail.com", password };
     }
 
     if (visitor === "guest") {
@@ -112,12 +112,12 @@ const StyledContainer = styled.div`
 const StyledPaper = styled(Paper)`
   padding: 20px;
   text-align: center;
-  background-color: #1f1f38;
+  background-color: #FF6600;
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
 
   &:hover {
-    background-color: #2c2c6c;
+    background-color: #2196F3;
     color: white;
   }
 `;
