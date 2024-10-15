@@ -2,10 +2,10 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { Grid, Box, Typography, Paper, Checkbox, FormControlLabel, TextField, CssBaseline, IconButton, InputAdornment, CircularProgress} from '@mui/material';
+import { Grid, Box, Typography, Paper, Checkbox, FormControlLabel, TextField, CssBaseline, IconButton, InputAdornment, CircularProgress } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import bgpic from "../../assets/designlogin.jpg"
+import bgpic from "../../assets/designlogin.jpg";
 import { LightPurpleButton } from '../../components/buttonStyles';
 import { registerUser } from '../../redux/userRelated/userHandle';
 import styled from 'styled-components';
@@ -14,14 +14,13 @@ import Popup from '../../components/Popup';
 const defaultTheme = createTheme();
 
 const AdminRegisterPage = () => {
-
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-
-    const { status, currentUser, response, error, currentRole } = useSelector(state => state.user);;
-
-    const [toggle, setToggle] = useState(false)
-    const [loader, setLoader] = useState(false)
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    
+    const { status, currentUser, response, error, currentRole } = useSelector(state => state.user);
+    
+    const [toggle, setToggle] = useState(false);
+    const [loader, setLoader] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [message, setMessage] = useState("");
 
@@ -29,11 +28,12 @@ const AdminRegisterPage = () => {
     const [passwordError, setPasswordError] = useState(false);
     const [adminNameError, setAdminNameError] = useState(false);
     const [schoolNameError, setSchoolNameError] = useState(false);
-    const role = "Admin"
+    
+    const role = "Admin";
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-
+        
         const name = event.target.adminName.value;
         const schoolName = event.target.schoolName.value;
         const email = event.target.email.value;
@@ -47,9 +47,10 @@ const AdminRegisterPage = () => {
             return;
         }
 
-        const fields = { name, email, password, role, schoolName }
-        setLoader(true)
-        dispatch(registerUser(fields, role))
+        const fields = { name, email, password, role, schoolName };
+        setLoader(true);
+        await dispatch(registerUser(fields, role));
+        setLoader(false); // Ensure loader is stopped after dispatch
     };
 
     const handleInputChange = (event) => {
@@ -63,14 +64,11 @@ const AdminRegisterPage = () => {
     useEffect(() => {
         if (status === 'success' || (currentUser !== null && currentRole === 'Admin')) {
             navigate('/Admin/dashboard');
-        }
-        else if (status === 'failed') {
-            setMessage(response)
-            setShowPopup(true)
-            setLoader(false)
-        }
-        else if (status === 'error') {
-            console.log(error)
+        } else if (status === 'failed') {
+            setMessage(response);
+            setShowPopup(true);
+        } else if (status === 'error') {
+            console.log(error);
         }
     }, [status, currentUser, currentRole, navigate, error, response]);
 
@@ -130,6 +128,7 @@ const AdminRegisterPage = () => {
                                 id="email"
                                 label="Enter your email"
                                 name="email"
+                                type="email"
                                 autoComplete="email"
                                 error={emailError}
                                 helperText={emailError && 'Email is required'}
@@ -151,11 +150,7 @@ const AdminRegisterPage = () => {
                                     endAdornment: (
                                         <InputAdornment position="end">
                                             <IconButton onClick={() => setToggle(!toggle)}>
-                                                {toggle ? (
-                                                    <Visibility />
-                                                ) : (
-                                                    <VisibilityOff />
-                                                )}
+                                                {toggle ? <Visibility /> : <VisibilityOff />}
                                             </IconButton>
                                         </InputAdornment>
                                     ),
@@ -172,17 +167,14 @@ const AdminRegisterPage = () => {
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
+                                disabled={loader} // Disable button while loading
                             >
-                                {loader ? <CircularProgress size={24} color="inherit"/> : "Register"}
+                                {loader ? <CircularProgress size={24} color="inherit" /> : "Register"}
                             </LightPurpleButton>
                             <Grid container>
-                                <Grid>
-                                    Already have an account?
-                                </Grid>
+                                <Grid>Already have an account?</Grid>
                                 <Grid item sx={{ ml: 2 }}>
-                                    <StyledLink to="/Adminlogin">
-                                        Log in
-                                    </StyledLink>
+                                    <StyledLink to="/Adminlogin">Log in</StyledLink>
                                 </Grid>
                             </Grid>
                         </Box>
@@ -208,7 +200,7 @@ const AdminRegisterPage = () => {
     );
 }
 
-export default AdminRegisterPage
+export default AdminRegisterPage;
 
 const StyledLink = styled(Link)`
   margin-top: 9px;
