@@ -12,11 +12,17 @@ export const getAllNotices = (id, address) => async (dispatch) => {
     try {
         const result = await axios.get(`${process.env.REACT_APP_BASE_URL}/${address}List/${id}`);
         if (result.data.message) {
+            // Assuming result.data.message contains error details
             dispatch(getFailed(result.data.message));
         } else {
             dispatch(getSuccess(result.data));
         }
     } catch (error) {
-        dispatch(getError(error));
+        // Enhanced error handling
+        const errorMessage = error.response 
+            ? error.response.data.message || error.message 
+            : error.message;
+
+        dispatch(getError(errorMessage));
     }
 }

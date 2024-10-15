@@ -13,6 +13,16 @@ import {
     getError,
 } from './userSlice';
 
+// Utility function for handling API responses
+const handleResponse = (dispatch, result, successCallback, failureMessage) => {
+    if (result.data.message) {
+        dispatch(authFailed(result.data.message));
+        return false; // Indicates failure
+    } 
+    successCallback(result.data);
+    return true; // Indicates success
+};
+
 export const loginUser = (fields, role) => async (dispatch) => {
     dispatch(authRequest());
 
@@ -20,13 +30,14 @@ export const loginUser = (fields, role) => async (dispatch) => {
         const result = await axios.post(`${process.env.REACT_APP_BASE_URL}/${role}Login`, fields, {
             headers: { 'Content-Type': 'application/json' },
         });
-        if (result.data.role) {
-            dispatch(authSuccess(result.data));
-        } else {
-            dispatch(authFailed(result.data.message));
+        if (handleResponse(dispatch, result, (data) => dispatch(authSuccess(data)), result.data.message)) {
+            // Successfully logged in
         }
     } catch (error) {
-        dispatch(authError(error));
+        const errorMessage = error.response 
+            ? error.response.data.message || error.message 
+            : error.message;
+        dispatch(authError(errorMessage));
     }
 };
 
@@ -37,17 +48,14 @@ export const registerUser = (fields, role) => async (dispatch) => {
         const result = await axios.post(`${process.env.REACT_APP_BASE_URL}/${role}Reg`, fields, {
             headers: { 'Content-Type': 'application/json' },
         });
-        if (result.data.schoolName) {
-            dispatch(authSuccess(result.data));
-        }
-        else if (result.data.school) {
-            dispatch(stuffAdded());
-        }
-        else {
-            dispatch(authFailed(result.data.message));
+        if (handleResponse(dispatch, result, (data) => dispatch(authSuccess(data)), result.data.message)) {
+            // Successfully registered
         }
     } catch (error) {
-        dispatch(authError(error));
+        const errorMessage = error.response 
+            ? error.response.data.message || error.message 
+            : error.message;
+        dispatch(authError(errorMessage));
     }
 };
 
@@ -64,25 +72,12 @@ export const getUserDetails = (id, address) => async (dispatch) => {
             dispatch(doneSuccess(result.data));
         }
     } catch (error) {
-        dispatch(getError(error));
+        const errorMessage = error.response 
+            ? error.response.data.message || error.message 
+            : error.message;
+        dispatch(getError(errorMessage));
     }
-}
-
-// export const deleteUser = (id, address) => async (dispatch) => {
-//     dispatch(getRequest());
-
-//     try {
-//         const result = await axios.delete(`${process.env.REACT_APP_BASE_URL}/${address}/${id}`);
-//         if (result.data.message) {
-//             dispatch(getFailed(result.data.message));
-//         } else {
-//             dispatch(getDeleteSuccess());
-//         }
-//     } catch (error) {
-//         dispatch(getError(error));
-//     }
-// }
-
+};
 
 export const deleteUser = (id, address) => async (dispatch) => {
     dispatch(getRequest());
@@ -96,14 +91,14 @@ export const updateUser = (fields, id, address) => async (dispatch) => {
         const result = await axios.put(`${process.env.REACT_APP_BASE_URL}/${address}/${id}`, fields, {
             headers: { 'Content-Type': 'application/json' },
         });
-        if (result.data.schoolName) {
-            dispatch(authSuccess(result.data));
-        }
-        else {
-            dispatch(doneSuccess(result.data));
+        if (handleResponse(dispatch, result, (data) => dispatch(authSuccess(data)), result.data.message)) {
+            // Successfully updated user
         }
     } catch (error) {
-        dispatch(getError(error));
+        const errorMessage = error.response 
+            ? error.response.data.message || error.message 
+            : error.message;
+        dispatch(getError(errorMessage));
     }
 }
 
@@ -115,12 +110,13 @@ export const addStuff = (fields, address) => async (dispatch) => {
             headers: { 'Content-Type': 'application/json' },
         });
 
-        if (result.data.message) {
-            dispatch(authFailed(result.data.message));
-        } else {
-            dispatch(stuffAdded(result.data));
+        if (handleResponse(dispatch, result, (data) => dispatch(stuffAdded(data)), result.data.message)) {
+            // Successfully added stuff
         }
     } catch (error) {
-        dispatch(authError(error));
+        const errorMessage = error.response 
+            ? error.response.data.message || error.message 
+            : error.message;
+        dispatch(authError(errorMessage));
     }
 };
