@@ -9,7 +9,7 @@ import { LightPurpleButton } from '../components/buttonStyles';
 import styled from 'styled-components';
 import { loginUser } from '../redux/userRelated/userHandle';
 
-// StyledLink definition to remove 'StyledLink is not defined' error
+// Styled link component to resolve undefined error
 const StyledLink = styled.a`
     color: #7f56da;
     text-decoration: none;
@@ -34,7 +34,7 @@ const LoginPage = ({ role }) => {
         studentName: false,
     });
 
-    // Handle form submission
+    // Form submission handler
     const handleSubmit = (event) => {
         event.preventDefault();
         const values = {
@@ -50,7 +50,7 @@ const LoginPage = ({ role }) => {
         }
     };
 
-    // Validate inputs based on the role
+    // Input validation based on user role
     const validateInputs = (role, values) => {
         const newErrors = {};
         if (role === "Student") {
@@ -65,13 +65,13 @@ const LoginPage = ({ role }) => {
         return Object.keys(newErrors).length === 0;
     };
 
-    // Handle input changes to reset validation errors
+    // Handle input change to reset validation errors
     const handleInputChange = (event) => {
         const { name } = event.target;
         setErrors((prevErrors) => ({ ...prevErrors, [name]: false }));
     };
 
-    // Use effect to handle successful login
+    // Handle successful login based on the user role
     useEffect(() => {
         if (status === 'success' || currentUser !== null) {
             navigate(currentRole === 'Admin' ? '/Admin/dashboard' : currentRole === 'Student' ? '/Student/dashboard' : '/Teacher/dashboard');
@@ -89,7 +89,7 @@ const LoginPage = ({ role }) => {
                         <Typography variant="h4" sx={{ mb: 2, color: "#2c2143" }}>
                             {role} Login
                         </Typography>
-                        <Typography variant="h7">Welcome back! Please put in your details</Typography>
+                        <Typography variant="h7">Welcome back! Please enter your details.</Typography>
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }}>
                             {role === "Student" ? (
                                 <>
