@@ -21,20 +21,24 @@ const App = () => {
   return (
     <Router>
       <Routes>
+        {/* Routes for visitors */}
         {currentRole === null && (
           <>
             <Route path="/" element={<Homepage />} />
             <Route path="/choose" element={<ChooseUser visitor="normal" />} />
             <Route path="/chooseasguest" element={<ChooseUser visitor="guest" />} />
 
+            {/* Login routes based on roles */}
             <Route path="/Adminlogin" element={<LoginPage role="Admin" />} />
             <Route path="/Studentlogin" element={<LoginPage role="Student" />} />
             <Route path="/Teacherlogin" element={<LoginPage role="Teacher" />} />
 
+            {/* Admin registration */}
             <Route path="/Adminregister" element={<AdminRegisterPage />} />
           </>
         )}
 
+        {/* Routes for logged-in users */}
         <Route
           path="/admin"
           element={
@@ -60,6 +64,7 @@ const App = () => {
           }
         />
 
+        {/* Catch-all route */}
         <Route path='*' element={<Navigate to="/" />} />
       </Routes>
     </Router>
