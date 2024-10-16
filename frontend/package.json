@@ -20,11 +20,10 @@
     "react-scripts": "5.0.1",
     "recharts": "^2.6.2",
     "redux": "^4.2.1",
-    "serve": "^14.2.4",
     "styled-components": "^5.3.10"
   },
   "scripts": {
-    "start": "PORT=${PORT:-3000} react-scripts start",
+    "start": "cross-env PORT=3000 react-scripts start",
     "build": "react-scripts build",
     "build:memory": "node --max_old_space_size=4096 node_modules/.bin/react-scripts build",
     "test": "react-scripts test",
@@ -49,6 +48,7 @@
     ]
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "webpack": "^5.81.0"
   }
 }
