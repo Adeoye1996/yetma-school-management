@@ -30,7 +30,7 @@ const Homepage = () => {
                             <StyledLink to="/choose">
                                 <LightPurpleButton variant="contained" fullWidth>
                                     Login
-                                </LightBlueButton>
+                                </LightPurpleButton>
                             </StyledLink>
                             <StyledLink to="/chooseasguest">
                                 <Button variant="outlined" fullWidth
